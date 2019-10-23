@@ -26,6 +26,9 @@ public class Ball3DAgent : Agent
         AddVectorObs(m_BallRb.velocity); //观察 球的方向速度
     }
 
+    //vectorAction有两种模式，一种是离散，一种是连续。比如在这个demo中我把act设置为离散，因为角色的行为无非是左转右转和向前，
+    //那么我们把act为0时作为角色向前的信号，1和2作为角色向左和向右，用离散就合适了，
+    //离散和连续在Brain中的action设置即可。
     public override void AgentAction(float[] vectorAction, string textAction)
     {
         if (brain.brainParameters.vectorActionSpaceType == SpaceType.Continuous)

@@ -5,7 +5,9 @@ public class Ball3DAcademy : Academy
 {
     public override void AcademyReset()
     {
-        Physics.gravity = new Vector3(0, -resetParameters["gravity"], 0);
+        float gravity = -resetParameters["gravity"];
+        Debug.LogError("ÖØÖÃÖØÁ¦--" + gravity);
+        Physics.gravity = new Vector3(0, gravity, 0);
     }
 
     public override void AcademyStep()
