@@ -3,58 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Agent子类定义了Agent用于观察其环境，执行分配的动作以及计算用于强化训练的报酬的代码。您也可以实现可选方法，
-//以在代理完成或失败任务后重置代理。
-public class AgentDJL : Agent
+public class CatchNoConAgent :  Agent
 {
     private BasicAcademy m_Academy;
     int m_Position;
-    int coll;
-    float ray = 0;
+    Vector3 mPostion;
+    float dis;
+    GameObject fianl;
     Ray mRay;
     int ball_layer;
     int goal_layer;
-    float dis;
-    GameObject fianl;
-    public override void InitializeAgent()
-    {
-        m_Academy = FindObjectOfType(typeof(BasicAcademy)) as BasicAcademy;
-    }
-
-    //private void FixedUpdate()
-    //{
-    //    RaycastHit hitInfo;
-    //    if (Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0)
-    //        , transform.forward, out hitInfo, 10, ball_layer))
-    //    {
-    //        //if (hitInfo.transform.gameObject.layer.Equals())
-    //        //{
-
-    //        //}
-    //        ray = 1;
-    //        dis = Vector3.Distance(transform.position, hitInfo.transform.position);
-    //    }
-    //    else if (Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0)
-    //, transform.forward, 10, goal_layer))
-    //    {
-    //        if (hitInfo.transform != null)
-    //        {
-    //            dis = Vector3.Distance(transform.position, hitInfo.transform.position);
-    //            ray = 2;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        dis = 0;
-    //        ray = 0;
-    //    }
-
-    //    //if (!m_Academy.GetIsInference())
-    //    //{
-    //    //    RequestDecision();
-    //    //}
-    //}
-
+    int coll;
+    float ray = 0;
     float lastDis = 10000;
 
     //收集观察值
@@ -78,54 +38,21 @@ public class AgentDJL : Agent
         //发射射线
         // AddVectorObs(ray);
         //AddVectorObs(dis); //躲避障碍
-      //  AddVectorObs(transform.eulerAngles);
-     //   AddVectorObs(transform.localPosition);
-        AddVectorObs(fianl.transform.localPosition- transform.localPosition); //寻找终点,距离远近
+        //  AddVectorObs(transform.eulerAngles);
+        //   AddVectorObs(transform.localPosition);
+        AddVectorObs(fianl.transform.localPosition - transform.localPosition); //寻找终点,距离远近
         //  AddVectorObs(coll);
         //  AddVectorObs(m_Position);
     }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.transform.tag.Equals("wall"))
-        {
-            Debug.Log("触碰到障碍");
-            coll = 1;
-            Done();
-        }
-        if (collision.transform.tag.Equals("goal"))
-        {
-           // float nowDis = (transform.localPosition - fianl.transform.localPosition).magnitude;
-            Debug.LogError("触碰到目标------");
-            coll = 100;
-        }
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.transform.tag.Equals("wall"))
-        {
-            coll = 0;
-        }
-        if (collision.transform.tag.Equals("goal"))
-        {
-            coll = 0;
-        }
-    }
-    Vector3 mPostion;
-
-
     public override void AgentAction(float[] vectorAction, string textAction)
     {
         //我们得到几个值，用于旋转和移动
         var actionX = Mathf.Clamp(vectorAction[0], -1f, 1f);
-        var actionZ =  Mathf.Clamp(vectorAction[1], -1f, 1f);
+        var actionZ = Mathf.Clamp(vectorAction[1], -1f, 1f);
 
         //mPostion += actionTransF;
 
-
         // gameObject.transform.Rotate(new Vector3(0, 1, 0), actionTransR);
-
 
         transform.localPosition += new Vector3(actionX, 0, actionZ);
 
@@ -147,7 +74,7 @@ public class AgentDJL : Agent
             SetReward(1f);
             Done();
         }
-        if (nowDis > (lastDis+0.5f))
+        if (nowDis > (lastDis + 0.5f))
         {
             Debug.LogError("获得远离惩罚");
             SetReward(-0.1f);
@@ -204,5 +131,53 @@ public class AgentDJL : Agent
         // SetResetParameters();
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.tag.Equals("wall"))
+        {
+            Debug.Log("触碰到障碍");
+            coll = 1;
+            Done();
+        }
+        if (collision.transform.tag.Equals("goal"))
+        {
+            // float nowDis = (transform.localPosition - fianl.transform.localPosition).magnitude;
+            Debug.LogError("触碰到目标------");
+            coll = 100;
+        }
+    }
 
+    //private void FixedUpdate()
+    //{
+    //    RaycastHit hitInfo;
+    //    if (Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0)
+    //        , transform.forward, out hitInfo, 10, ball_layer))
+    //    {
+    //        //if (hitInfo.transform.gameObject.layer.Equals())
+    //        //{
+
+    //        //}
+    //        ray = 1;
+    //        dis = Vector3.Distance(transform.position, hitInfo.transform.position);
+    //    }
+    //    else if (Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0)
+    //, transform.forward, 10, goal_layer))
+    //    {
+    //        if (hitInfo.transform != null)
+    //        {
+    //            dis = Vector3.Distance(transform.position, hitInfo.transform.position);
+    //            ray = 2;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        dis = 0;
+    //        ray = 0;
+    //    }
+
+    //    //if (!m_Academy.GetIsInference())
+    //    //{
+    //    //    RequestDecision();
+    //    //}
+    //}
 }

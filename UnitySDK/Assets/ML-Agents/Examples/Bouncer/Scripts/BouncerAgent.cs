@@ -43,6 +43,7 @@ public class BouncerAgent : Agent
         var z = vectorAction[2];
         m_Rb.AddForce(new Vector3(x, y + 1, z) * strength);
 
+        //跳得越高，越惩罚，让它只使用尽量少的能量跳跃
         AddReward(-0.05f * (
             vectorAction[0] * vectorAction[0] +
             vectorAction[1] * vectorAction[1] +
@@ -74,9 +75,10 @@ public class BouncerAgent : Agent
 
     private void FixedUpdate()
     {
+        //如果还没起跳
         if (Physics.Raycast(transform.position, new Vector3(0f, -1f, 0f), 0.51f) && m_JumpCooldown <= 0f)
         {
-            RequestDecision();
+            RequestDecision(); //请求决策
             m_JumpLeft -= 1;
             m_JumpCooldown = 0.1f;
             m_Rb.velocity = default(Vector3);
@@ -84,6 +86,7 @@ public class BouncerAgent : Agent
 
         m_JumpCooldown -= Time.fixedDeltaTime;
 
+        //如果掉下去了
         if (gameObject.transform.position.y < -1)
         {
             AddReward(-1);
@@ -91,6 +94,7 @@ public class BouncerAgent : Agent
             return;
         }
 
+        //如果出了地图范围
         if (gameObject.transform.localPosition.x < -19 || gameObject.transform.localPosition.x > 19
             || gameObject.transform.localPosition.z < -19 || gameObject.transform.localPosition.z > 19)
         {
